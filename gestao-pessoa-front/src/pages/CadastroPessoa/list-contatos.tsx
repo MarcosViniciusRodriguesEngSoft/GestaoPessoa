@@ -4,6 +4,7 @@ import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { IContatoCleanDTO } from '../../_config/model/elotech-gestao-pessoa-api.model';
 import Label from '../../components/Label';
 import Validation from '../../components/Validation';
+import { formatPhone } from '../../_config/utils/format';
 
 interface Props {
     contatos: IContatoCleanDTO[];
@@ -61,8 +62,8 @@ const ListContatos: React.FunctionComponent<Props> = ({ contatos, contato, setCo
                     id={`telefone${index + 1}`}
                     className="wp-100"
                     placeholder="Ex: (00) 0000-0000"
-                    defaultValue={contato?.telefone}
-                    value={contato?.telefone}
+                    defaultValue={formatPhone(contato?.telefone)}
+                    value={formatPhone(contato?.telefone)}
                     onChange={(e) => {
                         const updateContatos = [...contatos];
                         updateContatos[index].telefone = e.target.value;

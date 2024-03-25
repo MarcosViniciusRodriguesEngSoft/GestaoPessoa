@@ -1,7 +1,7 @@
 import { Dropdown, Menu, Modal, notification } from "antd";
 import { useEffect, useState } from "react";
 import { AiOutlineEllipsis } from "react-icons/ai";
-import { FaUserEdit } from "react-icons/fa";
+import { FaAddressBook, FaUserEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { IPessoaCleanDTO } from '../../_config/model/elotech-gestao-pessoa-api.model';
 import { PageableResponse } from "../../_config/model/response.model";
@@ -58,7 +58,7 @@ function Home() {
     const menu = (pessoa: IPessoaCleanDTO): any => (
         <Menu>
             <Menu.Item onClick={() => deletePessoa(pessoa)}>
-                Deletar
+                Deletar cadastro
             </Menu.Item>
         </Menu>
     );
@@ -79,8 +79,6 @@ function Home() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search, currentPage, itemsPerPage]);
 
-    console.log(pessoaList, currentPage, itemsPerPage);
-
     return (
         <div className="container">
 
@@ -90,7 +88,7 @@ function Home() {
                 search={search}
             />
 
-            
+
             {pessoaList && pessoaList.content.map(pessoa =>
                 <div className="list-item">
                     <div>
@@ -111,17 +109,22 @@ function Home() {
                         </Link>
                     </div>
                     <div className="list-item-button">
+                        <Link to={`/lista-contato/${pessoa?.id}`}>
+                            <FaAddressBook />
+                        </Link>
+                    </div>
+                    <div className="list-item-button">
                         <Dropdown overlay={menu(pessoa)} placement="bottomRight" arrow>
                             <AiOutlineEllipsis
                                 className="button-dropdown"
-                                size="20"
+                                size="30"
                                 color="#92A9CB"
                             />
                         </Dropdown>
                     </div>
                 </div>
             )}
-            {pessoaList && pessoaList.content.length < 0 ?
+            {pessoaList && pessoaList.content.length > 0 ?
                 <Pagination
                     data={pessoaList?.totalElements}
                     itemsPerPage={itemsPerPage}

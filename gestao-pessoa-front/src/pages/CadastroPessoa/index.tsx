@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { IContatoCleanDTO, IPessoaFullDTO } from "../../_config/model/elotech-gestao-pessoa-api.model";
 import { useContatoService } from "../../_config/services/contato.service";
 import { usePessoaService } from "../../_config/services/pessoa.service";
-import { toDayjs } from "../../_config/utils/format";
+import { formatCpf, toDayjs } from "../../_config/utils/format";
 import Label from "../../components/Label";
 import Validation from "../../components/Validation";
 import ListContatos from "./list-contatos";
@@ -154,8 +154,8 @@ function CadastroPessoa() {
                         id="cpf"
                         className="wp-100"
                         placeholder="Ex: 000.000.000-00"
-                        defaultValue={pessoa?.cpf}
-                        value={pessoa?.cpf}
+                        defaultValue={formatCpf(pessoa?.cpf)}
+                        value={formatCpf(pessoa?.cpf)}
                         onChange={(e) => setPessoa({ ...pessoa, cpf: e.target.value })} />
                     <Validation validationFilds={ValidationFields} validationFild={pessoa?.cpf} msgError="Informe o cpf completo" />
                 </div>
