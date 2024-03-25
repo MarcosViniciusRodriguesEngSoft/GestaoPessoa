@@ -1,0 +1,10 @@
+th {
+    text-align: center !important;
+    white-space: nowrap;
+    font-weight: bold !important;
+    color: var(--color-th) !important;
+}
+
+td {
+    text-align: center;
+}

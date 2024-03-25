@@ -1,0 +1,106 @@
+.list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.list-item .list-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100px;
+}
+
+.list-item .list-logo img {
+    width: 80px;
+    height: 80px;
+}
+
+.list-item div {
+    width: 20%;
+}
+
+.list-item h2 {
+    flex-direction: column;
+    align-items: flex-start !important;
+    text-align: start;
+    font-size: 1.2em !important;
+}
+
+.list-item p {
+    text-align: center;
+    color: var(--color-dim-gray);
+}
+
+.list-item-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-cadastro-pessoa-button,
+.header-cadastro-pessoa-button div button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-cadastro-pessoa-button button {
+    display: inline-block;
+    padding: 10px 20px;
+    width: 100%;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    color: var(--color-white);
+    background-color: var(--color-dark-blue);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.header-cadastro-pessoa-button button:hover {
+    color: var(--color-white);
+    background-color: var(--color-blue);
+}
+
+.header-cadastro-pessoa-button button:focus {
+    outline: none;
+    box-shadow: 0 0 5px var(--color-blue);
+}
+
+@media (max-width: 1000px) {
+
+    .list-item .list-item-ocultar {
+        display: none;
+    }
+}
+
+@media (max-width: 680px) {
+
+    .list-item h2 {
+        display: flex;
+        align-items: center !important;
+        font-size: 1em !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .list-item div {
+        width: 100%;
+    }
+
+    .list-item h2 {
+        display: flex;
+        align-items: center !important;
+        font-size: 1em !important;
+    }
+}

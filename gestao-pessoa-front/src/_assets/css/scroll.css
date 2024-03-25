@@ -1,0 +1,15 @@
+.scroll {
+    overflow: scroll;
+}
+
+.scroll-hidden {
+    overflow: hidden;
+}
+
+.scroll-y {
+    overflow-y: scroll;
+}
+
+.scroll-x {
+    overflow-x: scroll;
+}

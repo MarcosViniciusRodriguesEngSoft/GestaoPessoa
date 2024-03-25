@@ -1,0 +1,132 @@
+/***__ import de reset styles__***/
+@import url('_assets/css/_reset.css');
+
+/***__ import de styles padrão__***/
+@import url('_assets/css/border-radius.css');
+@import url('_assets/css/box-shadow.css');
+@import url('_assets/css/color.css');
+@import url('_assets/css/container.css');
+@import url('_assets/css/font-size.css');
+@import url('_assets/css/height.css');
+@import url('_assets/css/label.css');
+@import url('_assets/css/margin.css');
+@import url('_assets/css/padding.css');
+@import url('_assets/css/scroll.css');
+@import url('_assets/css/width.css');
+@import url('_assets/css/title-h.css');
+@import url('_assets/css/z-index.css');
+@import url('_assets/css/table.css');
+
+/***__ import de styles padrão do projeto__***/
+@import url('_assets/project-css/header-filter.css');
+@import url('_assets/project-css/container-cards.css');
+@import url('_assets/project-css/list-header.css');
+
+/***__ Configuração padrão do projeto__***/
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: var(--background-body);
+}
+
+p,
+li,
+a {
+    font-size: 1.1em !important;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+
+/***__ Configuração padrão do formato da letra __***/
+
+.strong {
+    font-weight: bold;
+}
+
+.italic {
+    font-style: italic;
+}
+
+/***__ Configuração padrão do alinhamento de elementos __***/
+.flex {
+    display: flex;
+}
+
+.none {
+    display: none;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-space-between {
+    justify-content: space-between;
+}
+
+.justify-flex-start {
+    justify-content: flex-start;
+}
+
+.justify-flex-end {
+    justify-content: flex-end;
+}
+
+.justify-space-around {
+    justify-content: space-around;
+}
+
+.justify-space-between {
+    justify-content: space-between;
+}
+
+.justify-space-evenly {
+    justify-content: space-evenly;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.align-flex-start {
+    align-items: flex-start;
+}
+
+.align-flex-end {
+    align-items: flex-end;
+}
+
+.link {
+    text-decoration: none !important;
+}
+
+
+
+.negativo {
+    color: var(--color-red) !important;
+}
+
+.positivo {
+    color: var(--color-green) !important;
+}

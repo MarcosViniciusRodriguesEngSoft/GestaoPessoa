@@ -1,0 +1,149 @@
+:root {
+    --color-link: #fff;
+    --color-hamburguer: #fff;
+    --color-background-navbar: #0f172a;
+    --font-size-link: 1em;
+}
+
+/* Navbar */
+.navbar nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar nav {
+    padding: 15px;
+    background-color: var(--color-background-navbar);
+}
+
+/* NavBrand */
+.navbar nav .logo-title {
+    align-items: center;
+    display: flex;
+    font-size: var(--font-size-link);
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--color-link);
+}
+
+/* NavBrandLogo */
+.navbrand-logo img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbrand-logo img {
+    width: 50px;
+    margin-right: 10px;
+    border-radius: 10px;
+}
+
+/* Nav */
+.navbar nav ul {
+    display: flex;
+    align-items: center;
+}
+
+/* NavLinkItem */
+.navbar nav ul li {
+    padding: 0 5px;
+}
+
+.navbar nav ul li a {
+    display: block;
+    text-decoration: none;
+    color: var(--color-link);
+    font-size: var(--font-size-link);
+}
+
+/* Hamburguer */
+.navbar nav .menu {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 40px;
+    height: 30px;
+}
+
+.navbar nav .menu span {
+    height: 5px;
+    width: 100%;
+    border-radius: 5px;
+    background-color: var(--color-hamburguer);
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown .dropdown-title {
+    display: block;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    color: var(--color-link);
+}
+
+.dropdown .dropdown-list {
+    position: absolute;
+    flex-direction: column;
+    top: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: var(--color-background-navbar);
+    z-index: 9999;
+}
+
+.dropdown .dropdown-list li {
+    padding: 5px 10px;
+}
+
+@media (max-width: 600px) {
+    .navbar nav .menu {
+        display: flex;
+        margin-top: 15px;
+        margin-right: 10px;
+    }
+
+    .navbar nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar nav ul {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .navbar nav ul.open {
+        display: flex;
+    }
+
+    .navbar nav ul li {
+        width: 100%;
+        text-align: center;
+        padding: 5px 0;
+    }
+
+    .dropdown {
+        width: 100%;
+    }
+
+    .dropdown ul {
+        position: relative;
+        display: flex !important;
+        justify-content: center;
+    }
+
+    .dropdown .dropdown-list {
+        position: relative;
+    }
+}

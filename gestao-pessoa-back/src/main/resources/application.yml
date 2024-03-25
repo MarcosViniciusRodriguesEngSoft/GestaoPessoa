@@ -1,0 +1,8 @@
+#Desativar banner
+#spring.main.banner-mode=off
+
+#Configuração custom banner local
+spring.banner.location: classpath:/banner.txt
+
+#Configuração imagem
+spring.banner.image.location: classpath:/img/insignia-branco.png

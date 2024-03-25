@@ -1,0 +1,28 @@
+.items-per-page {
+    display: flex;
+    align-items: center;
+}
+
+.items-per-page label {
+    margin-right: 10px;
+}
+
+.items-per-page select {
+    padding: 8px;
+    border-radius: 25px;
+    border: none;
+    background-color: var(--color-dark-blue);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.items-per-page select:hover {
+    background-color: var(--color-blue);
+}
+
+.items-per-page select:focus {
+    outline: none;
+    background-color: var(--color-blue);
+}
