@@ -39,14 +39,7 @@ function CadastroPessoa() {
                     message: 'Sucesso!',
                 });
                 navigate("/");
-            }).catch((error) => {
-                console.log(error.response.data);
-                notification.success({
-                    description: error.response.data,
-                    type: 'success',
-                    message: 'Sucesso!',
-                });
-            })
+            });
     }
 
     const updatePessoa = () => {

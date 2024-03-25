@@ -1,5 +1,5 @@
-import { AxiosResponse } from 'axios';
 
+import { AxiosResponse } from 'axios';
 import http from '../helpers/http-common';
 import { IPessoaCleanDTO, IPessoaFullDTO } from '../model/elotech-gestao-pessoa-api.model';
 import { PageableResponse } from '../model/response.model';
