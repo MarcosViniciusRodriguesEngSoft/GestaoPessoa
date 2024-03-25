@@ -10,6 +10,7 @@ import Label from "../../components/Label";
 import Validation from "../../components/Validation";
 import ListContatos from "./list-contatos";
 import "./styles.css";
+import { error } from "console";
 
 function CadastroPessoa() {
     const pessoaService = usePessoaService();
@@ -38,7 +39,14 @@ function CadastroPessoa() {
                     message: 'Sucesso!',
                 });
                 navigate("/");
-            });
+            }).catch((error) => {
+                console.log(error.response.data);
+                notification.success({
+                    description: error.response.data,
+                    type: 'success',
+                    message: 'Sucesso!',
+                });
+            })
     }
 
     const updatePessoa = () => {
@@ -89,6 +97,32 @@ function CadastroPessoa() {
                 message: 'Atenção!',
             });
         }
+
+        for (let i = 0; i < contatos.length; i++) {
+            const contato = contatos[i];
+            if (!contato.nome) {
+                return notification.warning({
+                    description: `Preencha o campo Nome do Contato.`,
+                    type: 'warning',
+                    message: 'Atenção!',
+                });
+            }
+            if (!contato.email) {
+                return notification.warning({
+                    description: `Preencha o campo E-mail do Contato.`,
+                    type: 'warning',
+                    message: 'Atenção!',
+                });
+            }
+            if (!contato.telefone) {
+                return notification.warning({
+                    description: `Preencha o campo Telefone do Contato.`,
+                    type: 'warning',
+                    message: 'Atenção!',
+                });
+            }
+        }
+
         sendRequest();
     }
 

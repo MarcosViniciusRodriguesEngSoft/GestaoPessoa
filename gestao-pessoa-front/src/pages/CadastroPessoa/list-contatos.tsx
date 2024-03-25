@@ -27,7 +27,7 @@ const ListContatos: React.FunctionComponent<Props> = ({ contatos, contato, setCo
                 </Button>
             </div>
             <div>
-                <Label htmlFor={`nome${index}`} elementRequired="*">Nome</Label>
+                <Label htmlFor={`nome${index}`} required>Nome</Label>
                 <Input
                     id={`nome${index + 1}`}
                     className="wp-100"

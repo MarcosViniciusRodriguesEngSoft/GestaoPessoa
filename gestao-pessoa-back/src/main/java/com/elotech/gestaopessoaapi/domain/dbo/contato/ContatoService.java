@@ -2,14 +2,13 @@ package com.elotech.gestaopessoaapi.domain.dbo.contato;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.elotech.gestaopessoaapi.domain.dbo.contato.dto.ContatoCleanDTO;
+import com.elotech.gestaopessoaapi.domain.dbo.pessoa.Pessoa;
 
 import jakarta.transaction.Transactional;
 
@@ -27,37 +26,7 @@ public class ContatoService {
         this.mapper = mapper;
     }
 
-    public ContatoCleanDTO findById(@PathVariable Integer id) {
-        var entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contato não encontrado com o ID: " + id));
-
-        return mapper.toContatoCleanDTO(entity);
-    }
-
-    public List<ContatoCleanDTO> findCleanList() {
-        List<Contato> entity = repository.findAll();
-        return entity.stream()
-                .map(mapper::toContatoCleanDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<Contato> findEntityList() {
-        List<Contato> entity = repository.findAll();
-        return entity;
-    }
-
-    public ContatoCleanDTO createClean(@RequestBody ContatoCleanDTO dto) {
-        Contato contato = new Contato();
-        contato.setNome(dto.getNome());
-        contato.setEmail(dto.getEmail());
-        contato.setTelefone(dto.getTelefone());
-
-        repository.save(contato);
-
-        return mapper.toContatoDTO(contato);
-    }
-
-    public ContatoCleanDTO update(@PathVariable Integer id, @RequestBody ContatoCleanDTO dto) {
+    public ContatoCleanDTO update(Integer id, @RequestBody ContatoCleanDTO dto) {
         Contato contato = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contato não encontrado com o ID: " + id));
 
@@ -70,18 +39,15 @@ public class ContatoService {
         return mapper.toContatoCleanDTO(entity);
     }
 
-    public void delete(@PathVariable Integer id) {
-        Contato contato = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contato não encontrado com o ID: " + id));
-
-        repository.delete(contato);
-    }
-
     @Transactional(rollbackOn = Exception.class)
-    public List<Contato> createEntityList(List<ContatoCleanDTO> contatos) {
+    public List<Contato> createEntityList(Integer pessoaId, List<ContatoCleanDTO> contatos) {
         List<Contato> entityList = new ArrayList<>();
         for (ContatoCleanDTO contato : contatos) {
-            entityList.add(repository.save(mapper.toEntity(contato)));
+            Contato entity = repository.save(mapper.toEntity(contato));
+            Pessoa pessoa = new Pessoa();
+            pessoa.setId(pessoaId);
+            entity.setPessoa(pessoa);
+            entityList.add(entity);
         }
         return entityList;
     }
@@ -90,12 +56,30 @@ public class ContatoService {
     public List<Contato> updateEntityList(List<ContatoCleanDTO> contatos) {
         List<Contato> entityList = new ArrayList<>();
         for (ContatoCleanDTO contato : contatos) {
-            var contatoClean = this.update(contato.getId(), contato);
-
-            var entity = mapper.toEntity(contatoClean);
-            entityList.add(entity);
+            var contatoClean = contato;
+            if (contato.getId() != null) {
+                contatoClean = this.update(contato.getId(), contato);
+                var entity = mapper.toEntity(contatoClean);
+                entityList.add(entity);
+            } else {
+                Contato novoContato = mapper.toEntity(contato);
+                Contato contatoSalvo = repository.save(novoContato);
+                entityList.add(contatoSalvo);
+            }
         }
         return entityList;
+    }
+
+    public List<Contato> findEntityList() {
+        List<Contato> entity = repository.findAll();
+        return entity;
+    }
+
+    public void delete(Integer id) {
+        Contato contato = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contato não encontrado com o ID: " + id));
+
+        repository.delete(contato);
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -104,5 +88,4 @@ public class ContatoService {
             repository.delete(contato);
         });
     }
-
 }

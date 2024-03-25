@@ -29,11 +29,6 @@ public class PessoaController {
     @Autowired
     private PessoaService service;
 
-    @GetMapping("/{id}")
-    public PessoaCleanDTO findCleanById(@PathVariable Integer id) {
-        return service.findCleanById(id);
-    }
-
     @GetMapping("/full/{id}")
     public PessoaFullDTO findFullById(@PathVariable Integer id) {
         return service.findFullById(id);
@@ -50,18 +45,13 @@ public class PessoaController {
         return service.findPageable(nome, cpf, currentPage, itemsPerPage, pageable);
     }
 
-    @GetMapping("/clean/list")
-    public List<PessoaCleanDTO> pessoaList() {
-        return service.findList();
-    }
-
     @PostMapping
-    public PessoaFullDTO createPessoa(@RequestBody @Valid PessoaFullDTO dto) {
+    public PessoaFullDTO createFull(@RequestBody @Valid PessoaFullDTO dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PessoaFullDTO> updatePessoa(@PathVariable Integer id, @RequestBody PessoaFullDTO dto) {
+    public ResponseEntity<PessoaFullDTO> updateFull(@PathVariable Integer id, @RequestBody @Valid PessoaFullDTO dto) {
         service.update(id, dto);
         return ResponseEntity.noContent().build();
     }

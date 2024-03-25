@@ -4,10 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +26,6 @@ public class PessoaService {
     private final PessoaMapper mapper;
     private final ContatoService contatoService;
 
-    @Autowired
     public PessoaService(
             PessoaRepository repository,
             PessoaMapper mapper,
@@ -38,20 +35,19 @@ public class PessoaService {
         this.contatoService = contatoService;
     }
 
-    public PessoaCleanDTO findCleanById(Integer id) {
-        Optional<Pessoa> optionalPessoa = repository.findById(id);
-        Pessoa pessoa = optionalPessoa.orElseThrow(() -> new RuntimeException("Pessoa não encontrada com o ID: " + id));
-        return mapper.toPessoaCleanDTO(pessoa);
+    public Pessoa findById(Integer id) {
+        Pessoa pessoa = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com o ID: " + id));
+        return pessoa;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void createEntity(@RequestBody Pessoa entity) {
+        repository.save(entity);
     }
 
     public PessoaFullDTO findFullById(Integer id) {
-        Pessoa pessoa = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com o ID: " + id));
-
-        List<Contato> contatos = contatoService.findEntityList();
-        List<Contato> contatoPessoa = contatos.stream().filter(c -> c.getPessoa().getId() == pessoa.getId()).toList();
-
-        pessoa.setContatos(contatoPessoa);
+        Pessoa pessoa = this.findById(id);
 
         return mapper.toPessoaFullDTO(pessoa);
     }
@@ -71,7 +67,7 @@ public class PessoaService {
 
         List<PessoaCleanDTO> pageList = new ArrayList<>();
         if (filteredListClean.size() < startItem) {
-            pageList = Collections.emptyList(); // Retorna uma lista vazia
+            pageList = Collections.emptyList();
         } else {
             int toIndex = Math.min(startItem + itemsPerPage, filteredListClean.size());
             pageList = filteredListClean.subList(startItem, toIndex);
@@ -82,13 +78,6 @@ public class PessoaService {
         return pessoaPageable;
     }
 
-    public List<PessoaCleanDTO> findList() {
-        List<Pessoa> entityList = repository.findAll();
-        return entityList.stream()
-                .map(mapper::toPessoaCleanDTO)
-                .collect(Collectors.toList());
-    }
-
     public PessoaFullDTO create(PessoaFullDTO dto) {
         Pessoa pessoa = new Pessoa();
 
@@ -96,12 +85,6 @@ public class PessoaService {
             throw new BadRequestException("O cadastro deve conter pelo menos um contato.");
         }
 
-        List<Contato> contatos = contatoService.createEntityList(dto.getContatos());
-        contatos.forEach(c -> {
-            c.setPessoa(pessoa);
-        });
-
-        pessoa.setContatos(contatos);
         pessoa.setNome(dto.getNome());
         pessoa.setCpf(dto.getCpf());
 
@@ -113,26 +96,24 @@ public class PessoaService {
 
         Pessoa entity = repository.save(pessoa);
 
+        contatoService.createEntityList(entity.getId(), dto.getContatos());
+
         repository.save(entity);
 
         return mapper.toPessoaFullDTO(entity);
     }
 
     public PessoaFullDTO update(Integer id, PessoaFullDTO dto) {
-        Pessoa pessoa = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com o ID: " + id));
+        Pessoa pessoa = this.findById(id);
 
         if (dto.getContatos() == null || dto.getContatos().isEmpty()) {
             throw new BadRequestException("O cadastro deve conter pelo menos um contato.");
         } else {
-            if (dto.getContatos().size() > 0 && pessoa.getContatos().isEmpty()) {
-                List<Contato> contatos = contatoService.createEntityList(dto.getContatos());
+            if (dto.getContatos().size() > 0 || pessoa.getContatos().isEmpty()) {
+                List<Contato> contatos = contatoService.updateEntityList(dto.getContatos());
                 Pessoa pessoaContato = new Pessoa();
                 pessoaContato.setId(pessoa.getId());
                 contatos.forEach(c -> c.setPessoa(pessoaContato));
-                pessoa.setContatos(contatos);
-            } else {
-                List<Contato> contatos = contatoService.updateEntityList(dto.getContatos());
                 pessoa.setContatos(contatos);
             }
         }
@@ -156,10 +137,5 @@ public class PessoaService {
         contatoService.deleteEntityList(pessoa.getContatos());
 
         repository.delete(pessoa);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void createEntity(@RequestBody Pessoa entity) {
-        repository.save(entity);
     }
 }

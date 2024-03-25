@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import com.elotech.gestaopessoaapi.domain.dbo.contato.Contato;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
