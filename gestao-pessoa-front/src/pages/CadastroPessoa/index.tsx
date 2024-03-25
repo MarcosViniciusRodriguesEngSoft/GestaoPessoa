@@ -10,7 +10,6 @@ import Label from "../../components/Label";
 import Validation from "../../components/Validation";
 import ListContatos from "./list-contatos";
 import "./styles.css";
-import { error } from "console";
 
 function CadastroPessoa() {
     const pessoaService = usePessoaService();

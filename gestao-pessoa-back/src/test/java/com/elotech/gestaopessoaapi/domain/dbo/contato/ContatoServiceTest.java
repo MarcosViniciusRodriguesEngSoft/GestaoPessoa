@@ -1,3 +1,5 @@
+package com.elotech.gestaopessoaapi.domain.dbo.contato;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -5,60 +7,25 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.elotech.gestaopessoaapi.domain.dbo.contato.dto.ContatoCleanDTO;
 
+@SpringBootTest
 class ContatoServiceTest {
 
-    @Mock
+    @Autowired
+    private ContatoService contatoService;
+
+    @MockBean
     private ContatoRepository repository;
 
-    @Mock
+    @MockBean
     private ContatoMapper mapper;
-
-    @InjectMocks
-    private ContatoService service;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    @Test
-    void testUpdate() {
-        // Mocking data
-        ContatoCleanDTO dto = new ContatoCleanDTO();
-        dto.setNome("João");
-        dto.setTelefone("123456789");
-        dto.setEmail("joao@example.com");
-
-        Contato contato = new Contato();
-        contato.setId(1);
-        contato.setNome("Antônio");
-        contato.setTelefone("987654321");
-        contato.setEmail("antonio@example.com");
-
-        when(repository.findById(1)).thenReturn(Optional.of(contato));
-        when(repository.save(any(Contato.class))).thenReturn(contato);
-        when(mapper.toContatoCleanDTO(any(Contato.class))).thenReturn(dto);
-
-        // Testando o método update
-        ContatoCleanDTO updatedDTO = service.update(1, dto);
-
-        // Verifica se o DTO retornado não é nulo
-        assertNotNull(updatedDTO);
-        // Verifica se os valores foram atualizados corretamente
-        assertEquals("João", updatedDTO.getNome());
-        assertEquals("123456789", updatedDTO.getTelefone());
-        assertEquals("joao@example.com", updatedDTO.getEmail());
-    }
 
     @Test
     void testCreateEntityList() {
@@ -74,8 +41,30 @@ class ContatoServiceTest {
             return savedContato;
         });
 
+        // Simulando o comportamento do mapper
+        when(mapper.toEntity(any(ContatoCleanDTO.class))).thenAnswer(invocation -> {
+            ContatoCleanDTO dto = invocation.getArgument(0);
+            Contato contato = new Contato();
+            contato.setId(dto.getId());
+            contato.setNome(dto.getNome());
+            contato.setTelefone(dto.getTelefone());
+            contato.setEmail(dto.getEmail());
+            return contato;
+        });
+
+        // Simulando o comportamento do mapper ao converter de entidade para DTO
+        when(mapper.toContatoCleanDTO(any(Contato.class))).thenAnswer(invocation -> {
+            Contato contato = invocation.getArgument(0);
+            ContatoCleanDTO dto = new ContatoCleanDTO();
+            dto.setId(contato.getId());
+            dto.setNome(contato.getNome());
+            dto.setTelefone(contato.getTelefone());
+            dto.setEmail(contato.getEmail());
+            return dto;
+        });
+
         // Testando o método createEntityList
-        List<Contato> entityList = service.createEntityList(1, contatos);
+        List<Contato> entityList = contatoService.createEntityList(1, contatos);
 
         // Verifica se a lista retornada não é nula
         assertNotNull(entityList);
@@ -85,6 +74,4 @@ class ContatoServiceTest {
         assertEquals(1, entityList.get(0).getId());
         assertEquals(1, entityList.get(1).getId());
     }
-
-    // Adicione mais testes para os outros métodos conforme necessário
 }

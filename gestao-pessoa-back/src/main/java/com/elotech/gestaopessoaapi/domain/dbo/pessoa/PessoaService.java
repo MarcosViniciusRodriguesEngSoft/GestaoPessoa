@@ -16,6 +16,7 @@ import com.elotech.gestaopessoaapi.domain.dbo.contato.Contato;
 import com.elotech.gestaopessoaapi.domain.dbo.contato.ContatoService;
 import com.elotech.gestaopessoaapi.domain.dbo.pessoa.dto.PessoaCleanDTO;
 import com.elotech.gestaopessoaapi.domain.dbo.pessoa.dto.PessoaFullDTO;
+import com.elotech.gestaopessoaapi.domain.util.StringUtil;
 import com.elotech.gestaopessoaapi.exception.BadRequestException;
 
 @Service
@@ -27,8 +28,8 @@ public class PessoaService {
 
     public PessoaService(
             PessoaRepository repository,
-            PessoaMapper mapper,
-            ContatoService contatoService) {
+            ContatoService contatoService,
+            PessoaMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
         this.contatoService = contatoService;
@@ -80,21 +81,23 @@ public class PessoaService {
     public PessoaFullDTO create(PessoaFullDTO dto) {
         Pessoa pessoa = new Pessoa();
 
-        if (dto.getContatos().isEmpty()) {
-            throw new BadRequestException("O cadastro deve conter pelo menos um contato.");
-        }
-
         pessoa.setNome(dto.getNome());
+
+        if (!StringUtil.validarCPF(dto.getCpf())) {
+            throw new BadRequestException("O CPF informado não está em um formato válido.");
+        }
         pessoa.setCpf(dto.getCpf());
 
         if (dto.getDataNascimento().isAfter(LocalDate.now())) {
             throw new BadRequestException("A data informada não pode se futura a data de hoje.");
         }
-
         pessoa.setDataNascimento(dto.getDataNascimento());
 
         Pessoa entity = repository.save(pessoa);
 
+        if (dto.getContatos().isEmpty()) {
+            throw new BadRequestException("O cadastro deve conter pelo menos um contato.");
+        }
         contatoService.createEntityList(entity.getId(), dto.getContatos());
 
         repository.save(entity);
@@ -104,6 +107,18 @@ public class PessoaService {
 
     public PessoaFullDTO update(Integer id, PessoaFullDTO dto) {
         Pessoa pessoa = this.findById(id);
+
+        pessoa.setNome(dto.getNome());
+
+        if (!StringUtil.validarCPF(dto.getCpf())) {
+            throw new BadRequestException("O CPF informado não está em um formato válido.");
+        }
+        pessoa.setCpf(dto.getCpf());
+
+        if (dto.getDataNascimento().isAfter(LocalDate.now())) {
+            throw new BadRequestException("A data informada não pode ser futura à data de hoje.");
+        }
+        pessoa.setDataNascimento(dto.getDataNascimento());
 
         if (dto.getContatos() == null || dto.getContatos().isEmpty()) {
             throw new BadRequestException("O cadastro deve conter pelo menos um contato.");
@@ -117,24 +132,14 @@ public class PessoaService {
             }
         }
 
-        pessoa.setCpf(dto.getCpf());
-        pessoa.setNome(dto.getNome());
-
-        if (dto.getDataNascimento().isAfter(LocalDate.now())) {
-            throw new BadRequestException("A data informada não pode ser futura à data de hoje.");
-        }
-        pessoa.setDataNascimento(dto.getDataNascimento());
-
         pessoa = repository.save(pessoa);
         return mapper.toPessoaFullDTO(pessoa);
     }
 
     public void delete(Integer id) {
-        Pessoa pessoa = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com o ID: " + id));
+        Pessoa pessoa = this.findById(id);
 
         contatoService.deleteEntityList(pessoa.getContatos());
-
         repository.delete(pessoa);
     }
 }

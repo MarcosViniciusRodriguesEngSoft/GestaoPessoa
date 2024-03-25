@@ -14,7 +14,6 @@ http.interceptors.response.use(
 
                 switch (status) {
                     case 400:
-                        console.log(error.response.data.details[0]);
                         notification.error({
                             description: error.response.data.details[0] || 'Ops... Ocorreu um erro!',
                             type: 'error',

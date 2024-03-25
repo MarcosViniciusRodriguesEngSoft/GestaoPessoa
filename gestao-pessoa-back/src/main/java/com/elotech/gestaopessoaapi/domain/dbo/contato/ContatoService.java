@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.elotech.gestaopessoaapi.domain.dbo.contato.dto.ContatoCleanDTO;
 import com.elotech.gestaopessoaapi.domain.dbo.pessoa.Pessoa;
+import com.elotech.gestaopessoaapi.domain.util.StringUtil;
+import com.elotech.gestaopessoaapi.exception.BadRequestException;
 
 import jakarta.transaction.Transactional;
 
@@ -26,12 +28,21 @@ public class ContatoService {
         this.mapper = mapper;
     }
 
+    public Contato findById(Integer id) {
+        Contato contato = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contato não encontrado com o ID: " + id));
+        return contato;
+    }
+
     public ContatoCleanDTO update(Integer id, @RequestBody ContatoCleanDTO dto) {
         Contato contato = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contato não encontrado com o ID: " + id));
 
         contato.setNome(dto.getNome());
         contato.setTelefone(dto.getTelefone());
+        if (!StringUtil.validarEmail(dto.getEmail())) {
+            throw new BadRequestException("Email informado não está no padrão.");
+        }
         contato.setEmail(dto.getEmail());
 
         var entity = repository.save(contato);
@@ -76,9 +87,7 @@ public class ContatoService {
     }
 
     public void delete(Integer id) {
-        Contato contato = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Contato não encontrado com o ID: " + id));
-
+        Contato contato = this.findById(id);
         repository.delete(contato);
     }
 
