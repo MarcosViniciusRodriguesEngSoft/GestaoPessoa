@@ -2,72 +2,79 @@ package com.elotech.gestaopessoaapi.domain.dbo.pessoa;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import com.elotech.gestaopessoaapi.domain.dbo.contato.Contato;
 import com.elotech.gestaopessoaapi.domain.dbo.contato.ContatoService;
-import com.elotech.gestaopessoaapi.domain.dbo.contato.dto.ContatoCleanDTO;
 import com.elotech.gestaopessoaapi.domain.dbo.pessoa.dto.PessoaFullDTO;
+import com.elotech.gestaopessoaapi.exception.BadRequestException;
 
 @SpringBootTest
 public class PessoaServiceTest {
 
-    @Autowired
-    private PessoaService pessoaService;
-
-    @MockBean
+    @Mock
     private PessoaRepository pessoaRepository;
 
-    @MockBean
+    @Mock
+    private PessoaMapper pessoaMapper;
+
+    @Mock
     private ContatoService contatoService;
 
+    @InjectMocks
+    private PessoaService pessoaService;
+
     @Test
-    public void testCreate() {
-        // Mock de dados de entrada
+    public void testCreateWithValidData() {
+        // Mockando dados de entrada
         PessoaFullDTO dtoEntrada = new PessoaFullDTO();
-        dtoEntrada.setNome("Teste");
+        dtoEntrada.setNome("João da Silva");
         dtoEntrada.setCpf("12345678900");
-        dtoEntrada.setDataNascimento(LocalDate.of(1990, 1, 1));
+        dtoEntrada.setDataNascimento(LocalDate.of(1980, 5, 15));
 
-        ContatoCleanDTO contatoDTO = new ContatoCleanDTO();
-        contatoDTO.setNome("Contato de Teste");
-        List<ContatoCleanDTO> contatos = new ArrayList<>();
-        contatos.add(contatoDTO);
-        dtoEntrada.setContatos(contatos);
+        // Mockando comportamento do repository
+        Pessoa pessoaSalva = new Pessoa();
+        pessoaSalva.setId(1);
+        when(pessoaRepository.save(any())).thenReturn(pessoaSalva);
 
-        // Mock do retorno do repository e do serviço de contato
-        Pessoa pessoaMock = new Pessoa();
-        pessoaMock.setId(1);
-        when(pessoaRepository.save(any())).thenReturn(pessoaMock);
+        // Mockando comportamento do serviço de contatos
+        doNothing().when(contatoService).createEntityList(anyInt(), anyList());
 
-        Contato contatoMock = new Contato();
-        contatoMock.setId(1);
-        when(contatoService.createEntityList(any())).thenReturn(List.of(contatoMock));
-
-        // Execução do método a ser testado
+        // Executando o método a ser testado
         PessoaFullDTO resultado = pessoaService.create(dtoEntrada);
 
-        // Verificações dos mocks e do resultado
+        // Verificando o resultado
         assertNotNull(resultado);
-        assertEquals("Teste", resultado.getNome());
+        assertEquals(1, resultado.getId());
+        assertEquals("João da Silva", resultado.getNome());
         assertEquals("12345678900", resultado.getCpf());
-        assertEquals(LocalDate.of(1990, 1, 1), resultado.getDataNascimento());
-        assertEquals(1, resultado.getContatos().size());
-        assertEquals(1, resultado.getContatos().get(0).getId());
+        assertEquals(LocalDate.of(1980, 5, 15), resultado.getDataNascimento());
+    }
 
-        verify(pessoaRepository, times(1)).save(any());
-        verify(contatoService, times(1)).createEntityList(any());
+    @Test
+    public void testCreateWithEmptyContacts() {
+        // Mockando dados de entrada com lista de contatos vazia
+        PessoaFullDTO dtoEntrada = new PessoaFullDTO();
+        dtoEntrada.setNome("Maria Souza");
+        dtoEntrada.setCpf("98765432100");
+        dtoEntrada.setDataNascimento(LocalDate.of(1995, 10, 20));
+        dtoEntrada.setContatos(Collections.emptyList());
+
+        // Executando o método a ser testado e verificando se uma exceção é lançada
+        assertThrows(BadRequestException.class, () -> {
+            pessoaService.create(dtoEntrada);
+        });
     }
 }

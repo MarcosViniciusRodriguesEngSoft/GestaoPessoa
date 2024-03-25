@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.elotech.gestaopessoaapi.domain.dbo.contato.Contato;
 import com.elotech.gestaopessoaapi.domain.dbo.contato.ContatoService;
@@ -42,7 +41,7 @@ public class PessoaService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void createEntity(@RequestBody Pessoa entity) {
+    public void createEntity(Pessoa entity) {
         repository.save(entity);
     }
 
