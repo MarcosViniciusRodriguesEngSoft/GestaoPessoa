@@ -34,6 +34,9 @@ function Home() {
             });
     }
 
+    console.log(currentPage);
+    
+
     const deletePessoa = (pessoa) => {
         Modal.confirm({
             title: `Deseja realmente excluir o cadastro ?`,
@@ -73,7 +76,7 @@ function Home() {
     };
 
     useEffect(() => {
-        if (pessoaList?.content.length < 0) {
+        if (pessoaList?.content.length > 0) {
             findPessoa();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
